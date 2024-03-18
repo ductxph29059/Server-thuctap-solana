@@ -14,16 +14,19 @@ const dangNhap = async (req, res, next)=>{
     if(typeof email === "string" && email.trim().length === 0){
         msg = "Chưa nhập tên đăng nhập";
         return {data, msg};
+        res.status(404)
     }
     if(typeof password === "string" && password.trim().length === 0){
         msg = "Chưa nhập mật khẩu";
         return {data, msg};
+        res.status(404)
     }
     var item = await myMD.nguoiDungModel.findOne({ email: email });
     if(item == null){
         msg = "Tài khoản không tồn tại";
         return {data, msg};
-    } 
+        res.status(404)
+    }
     else {
         if(item.password == password){
             data = {
@@ -34,10 +37,12 @@ const dangNhap = async (req, res, next)=>{
                 trangThai: item.trangThai
             }
             msg = "Đăng nhập thành công";
+            res.status(200)
             // sock.io.emit("login", item.fullname + " đăng nhập thành công");
         }
         else{
             msg = "Mật khẩu không chính xác";
+            res.status(404)
         }
     }
     return {data, msg};
@@ -65,7 +70,7 @@ const themNguoiDung = async (req, res, next)=>{
     }
     if(typeof fullname === "string" && fullname.trim().length === 0){
         msg = "Chưa nhập họ tên";
-        return {data, msg}   ;    
+        return {data, msg}   ;
     }
     if(typeof email === "string" && email.trim().length > 50){
         msg = "Email quá dài. Tối đa 50 kí tự";
@@ -77,7 +82,7 @@ const themNguoiDung = async (req, res, next)=>{
     }
     if(typeof fullname === "string" && fullname.trim().length > 50){
         msg = "Họ và tên quá dài. Tối đa 50 kí tự";
-        return {data, msg}   ;    
+        return {data, msg}   ;
     }
     var item = await myMD.nguoiDungModel.findOne({ username: username });
     if(item != null){
@@ -252,7 +257,7 @@ const capNhatNguoiDung = async (req, res, next)=>{
     }
     if(typeof fullname === "string" && fullname.trim().length === 0){
         msg = "Chưa nhập họ tên";
-        return {data, msg}   ;    
+        return {data, msg}   ;
     }
     var item = await myMD.nguoiDungModel.aggregate([
         {
@@ -265,7 +270,7 @@ const capNhatNguoiDung = async (req, res, next)=>{
     if(!(item.length === 0)){
         msg = "Tên tài khoản đã tồn tại";
         return {data, msg};
-    } 
+    }
     let update = {
         username: username,
         password: password,
